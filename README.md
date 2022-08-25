@@ -1,6 +1,6 @@
 # vmanage_image_uploader
 
-Script used to automate the process of uploading sdwan devices images to vManage for the software upgrade process
+Script used to automate the process of uploading Software Images to vManage Sofware Repository
 
 
 ## Install instructions
@@ -47,6 +47,18 @@ Output:
 
     Ex. python uploader.py --add 198.18.1.10 --port 443 --user admin --pwd C1sco12345 --dir C:\Users\demouser\Downloads
 
+## Execute script
+
+Execute uploader.py file to run the script
+
+Ex 1. (From jump host at dcloud session: Cisco Secure SD-WAN 20.6.2 - 17.6.2 (Viptela) Single DC v1)
+
+    python uploader.py --add 198.18.1.10 --port 443 --user admin --pwd C1sco12345 --dir C:\\Users\\demouser\\Downloads
+
+Ex 2. (Locally)
+
+    python uploader.py --add my_vmanage.cisco.com --port 8443 --user rgomezbe --pwd cisco123 --dir /Users/rgomezbe/Downloads
+
 In case any of the required arguments is missed, user will be prompted to provide the info on the terminal
 
     ➜ python uploader.py
@@ -56,17 +68,7 @@ In case any of the required arguments is missed, user will be prompted to provid
     password: 
     image directory: C:\\Users\\demouser\\Downloads
 
-## Execute script
-
-Execute uploader.py file to run the script
-
-Ex 1. (Running the script from jump host at dcloud session: Cisco Secure SD-WAN 20.6.2 - 17.6.2 (Viptela) Single DC v1)
-
-    python uploader.py --add 198.18.1.10 --port 443 --user admin --pwd C1sco12345 --dir C:\\Users\\demouser\\Downloads
-
-Ex 2. (Running the script locally)
-
-    python uploader.py --add my_vmanage.cisco.com --port 8443 --user rgomezbe --pwd cisco123 --dir /Users/rgomezbe/Downloads
+Uploader will find all the files with "bin", "tar" and "gz" extensions and upload them to vManage
 
 Output:
 
