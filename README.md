@@ -7,7 +7,7 @@ Script used to automate the process of uploading Software Images to vManage Sofw
 
 Open your terminal or git-bash and clone the repository
 
-    git clone git@www-github.cisco.com:rgomezbe/vmanage_image_uploader.git
+    git clone https://github.com/rulerdo/vmanage_image_uploader.git
 
 Move to the repository folder
 
