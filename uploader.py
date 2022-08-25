@@ -66,11 +66,14 @@ class sdwan_manager():
         'X-XSRF-TOKEN': self.token,
         'Cookie': f'JSESSIONID={self.cookie}',
         }
+        
+        slash = '\\' if sys.platform == "win32" else '/'
 
         try:
+            
+            upload_file = {'name': open(f"{self.image_dir}{slash}{image}", "rb")}
+            size = int(os.stat(f"{self.image_dir}{slash}{image}").st_size / 1024)
 
-            upload_file = {'name': open(f"{self.image_dir}\\{image}", "rb")}
-            size = int(os.stat(f"{self.image_dir}\\{image}").st_size / 1024)
             print(f"Uploading {image} - {size} KB")
 
             response = requests.request("POST", url=upload_url, headers=headers, files=upload_file, verify=False)
