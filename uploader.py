@@ -3,7 +3,9 @@ from urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
 from time import time
 import os
+import sys
 from argparse import ArgumentParser
+from getpass import getpass
 
 class sdwan_manager():
 
@@ -30,7 +32,12 @@ class sdwan_manager():
 
         response = requests.request("POST", url, headers=headers, data=payload, verify=False)
 
-        cookie = response.cookies.get_dict()['JSESSIONID']
+        try:
+            cookie = response.cookies.get_dict()['JSESSIONID']
+
+        except KeyError:
+            print('Authentication failed!')
+            sys.exit(1)
 
         return cookie
 
@@ -118,22 +125,14 @@ class sdwan_manager():
 
 def get_arguments():
 
-    help_description = '''
-    Default vManage credentials and image folder work for dcloud session:
-    Cisco Secure SD-WAN 20.6.2 - 17.6.2 (Viptela) Single DC v1 ///
-    addr = '198.18.1.10'
-    port = '443'
-    user = 'admin'
-    pwd = 'C1sco12345'
-    dir = 'C:\\Users\\demouser\\Downloads' ///
-    Use the available arguments if you need to overwrite them
-    '''
-    parser = ArgumentParser(description=help_description)
-    parser.add_argument('--add', default='198.18.1.10', help='IP or Hostname of the vmanage')
-    parser.add_argument('--port', default='443', help='vmanage port for HTTPs 443 or 8433 commonly')
-    parser.add_argument('--user', default='admin', help='vmanage username with API access')
-    parser.add_argument('--pwd', default='C1sco12345', help='password for the given vmanage username')
-    parser.add_argument('--dir', default='C:\\Users\\demouser\\Downloads', help='Full path for local directory where the images are stored')
+    help_description = 'Use arguments to provide the required vManage info'
+    help_epilog = 'Ex. python uploader.py --add 198.18.1.10 --port 443 --user admin --pwd C1sco12345 --dir C:\\Users\\demouser\\Downloads'
+    parser = ArgumentParser(description=help_description, epilog=help_epilog)
+    parser.add_argument('--add', help='IP or Hostname of the vmanage')
+    parser.add_argument('--port', help='vmanage port for HTTPs 443 or 8433 commonly')
+    parser.add_argument('--user', help='vmanage username with API access')
+    parser.add_argument('--pwd', help='password for the given vmanage username')
+    parser.add_argument('--dir', help='Full path for local directory where the images are stored')
     arguments = parser.parse_args()
 
     return arguments
@@ -143,20 +142,20 @@ if __name__ == '__main__':
 
     args = get_arguments()
 
-    address = args.add
-    port = args.port
-    username = args.user
-    password = args.pwd
-    image_dir = args.dir
+    address = args.add if args.add else input('vManage address: ')
+    port = args.port if args.port else input('vManage port: ')
+    username = args.user if args.user else input('username: ')
+    password = args.pwd if args.pwd else getpass('password: ')
+    image_dir = args.dir if args.dir else input('image directory: ')
 
     session = sdwan_manager(address,port,username,password,image_dir)
 
-    if len(session.image_list) < 1:
-        print('No valid images found on:',image_dir)
-    
-    else:
+    if len(session.image_list) > 0:
         print('Images found:',session.image_list)
         for image in session.image_list:
-            session.upload_image(image)
+            session.upload_image(image)        
     
+    else:
+        print('No valid images found on:',image_dir)
+
     session.logout()
